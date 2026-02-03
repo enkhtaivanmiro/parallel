@@ -1,9 +1,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-
+#include <omp.h>
+// export OMP_NUM_THREADS=2
 int main()
 {
+
+#pragma omp parallel
+    {
+
+        printf("Hello, World!");
+    }
+
     const size_t size = 80000000;
     double *a = (double *)malloc(size * sizeof(double));
     for (size_t i = 0; i < size; i++)
@@ -28,6 +36,7 @@ int main()
         struct timespec start, end;
         double current_sum = 0.0;
         clock_gettime(CLOCK_MONOTONIC, &start);
+#pragma omp parallel for reduction(+ : current_sum) num_threads(8)
         for (size_t j = 0; j < size; j++)
         {
             current_sum += a[j];
